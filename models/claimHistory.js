@@ -6,14 +6,14 @@ const Schema = mongoose.Schema;
 const claimHistorySchema = new Schema({
     user: { type: String, required: true },
     amount: { type: Number }
-});
+},  { timestamps: { createdAt: 'createdAt' } });
 
 const ClaimHistoryModel = mongoose.model("ClaimHistory", claimHistorySchema);
 
 const saveUserHistory = async (user, amount) => {
     const model = new ClaimHistoryModel({
         user: user,
-        amount: amount
+        amount: amount,
     });
 
     try{
@@ -25,13 +25,12 @@ const saveUserHistory = async (user, amount) => {
 }
 
 const countUserHistoryToday = async (user) => {
-    let today = moment().startOf('day');
     try {
         return await ClaimHistoryModel.countDocuments({
             user: user,
             createdAt: {
-                $gte: today.toDate(),
-                $lte: moment(today).endOf('day').toDate()
+                $gte: moment.utc().startOf("day").format(),
+                $lte: moment.utc().endOf("day").format()
             }
         });
     } catch (err) {
