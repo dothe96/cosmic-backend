@@ -17,9 +17,27 @@ app.use(express.json());
 app.use("/api/airdrop", airdropRoute);
 app.use("/api/user", userRoute);
 
+app.get("/", (req, res) => {
+    res.send("Hi! I am a tiny server :)");
+});
 app.get("/api/ok", (req, res) => {
     res.json({ status: 200, message: "I'm here :)" });
 })
+
+
+app.use(function (req, res) {
+    if (req.method.toLowerCase() === "options") {
+        res.end();
+    } else {
+        res.status(404).json({ message: "Not Found" });
+    }
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+});
 
 // Unmatched routes handler
 app.use(function (req, res) {

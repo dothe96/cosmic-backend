@@ -6,7 +6,8 @@ const Schema = mongoose.Schema;
 const userInfoSchema = new Schema({
     user: { type: String, required: true},
     totalToken: { type: Number },
-    restricted: { type: Boolean },
+    claimedAll: { type: Boolean, default: false },
+    restricted: { type: Boolean, default: false },
     lastIn: { type: Date }
 });
 
@@ -41,8 +42,22 @@ const getUserInfo = async (user) => {
     }
 }
 
+const updateClaimAllState = async (user, state) => {
+    try {
+        return await UserInfoModel.updateOne({
+            user: user
+        }, {
+            claimedAll: state
+        });
+    } catch (err) {
+        console.log(err);
+        return;
+    }
+}
+
 module.exports = {
     UserInfoModel: UserInfoModel,
     upsertUserInfo: upsertUserInfo,
-    getUserInfo: getUserInfo
+    getUserInfo: getUserInfo,
+    updateClaimAllState: updateClaimAllState
 }
